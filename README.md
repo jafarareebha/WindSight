@@ -1,9 +1,6 @@
 # WindSight — UK Wind Power Forecast Intelligence Dashboard
 
 A professional decision-support tool for UK electricity utility day-ahead purchasing teams. WindSight helps analysts understand wind generation forecasts, evaluate forecast accuracy, and assess forecast uncertainty for the UK electricity market.
-
-> **⚠️ Disclaimer:** This application is an analytical decision-support tool. It does not execute trades or provide authoritative procurement recommendations.
-
 ---
 
 ## Business Problem
@@ -20,35 +17,33 @@ WindSight addresses this by providing:
 
 ---
 
-## Key Features
+### Key Features
 
-### Core Feature A: Forecast Overview
+Core Feature A: Forecast Overview
 - Interactive time-series chart comparing forecast vs actual wind generation
 - Summary metrics for selected delivery dates
 - Forecast publication timestamps and eligibility status
 - Half-hourly interval detail with tooltips
 
-### Core Feature B: Forecast Explorer
+Core Feature B: Forecast Explorer
 - Sortable, paginated data table of all delivery intervals
 - Forecast publication history for each interval
 - Decision cutoff configuration
 - Error breakdown by interval
 
-### Core Feature C: Forecast Accuracy Analysis
+Core Feature C: Forecast Accuracy Analysis
 - MAE, RMSE, and Mean Bias Error calculations
 - Error-over-time visualization
 - Largest-error identification
 - Data completeness tracking
 - Overprediction/underprediction statistics
 
-### Optional: Wind Shortfall Estimator
+ Optional: Wind Shortfall Estimator
 - User-entered assumed demand input
 - Indicative shortfall calculation
 - Prominent disclaimer about limitations
 
----
-
-## Technology Stack
+### Technology Stack
 
 ### Frontend
 | Technology | Purpose |
@@ -154,9 +149,8 @@ Both endpoints use `publishDateTimeFrom` and `publishDateTimeTo` (ISO 8601) to f
 ## Forecast Selection and Decision-Cutoff Methodology
 
 ### Day-Ahead Market Context
-The UK day-ahead electricity market (operated through EPEX SPOT) requires purchasing decisions before gate closure. The default decision cutoff in WindSight is **09:30 UTC** (09:30 GMT in January), based on the EPEX SPOT UK day-ahead auction timing.
+The UK day-ahead electricity market (operated through EPEX SPOT) requires purchasing decisions before gate closure. The default decision cutoff in WindSight is **09:30 UTC** (09:30 GMT in January), based on the EPEX SPOT UK day-ahead auction timing but it can be changed.
 
-> **Note:** This cutoff is a configurable assumption. The application does not verify the exact market gate closure time. Users can adjust the cutoff to match their specific procurement process.
 
 ### Forecast Selection Algorithm
 For each delivery interval `t` and a configured decision cutoff `T`:
@@ -221,31 +215,6 @@ MAPE = mean(|forecast − actual| / actual) × 100
 ```
 Only calculated when all actual values are non-zero. Documented as potentially misleading when generation is low.
 
-### Data Requirements
-- Metrics are calculated only from valid, matched forecast–actual pairs
-- Intervals missing either a forecast or an actual observation are excluded
-- The sample count and data coverage percentage are always displayed alongside metrics
-- If too few valid observations exist, an explanatory message is shown instead of misleading metrics
-
----
-
-## Assumptions and Limitations
-
-1. **Decision cutoff is assumed, not verified.** The default 09:30 UTC cutoff is based on the EPEX SPOT UK day-ahead auction schedule. Users should verify this against their actual procurement timeline.
-
-2. **Hourly forecast rate mapped to 30-minute settlement periods.** Each hourly forecast rate is evaluated against the native half-hourly outturn for both settlement periods within that hour, preserving actual settlement granularity without synthesizing artificial sub-hourly forecast profiles.
-
-3. **National-level data only.** Both FUELHH and WINDFOR provide GB-national aggregated wind generation. Regional breakdowns are not available from these datasets.
-
-4. **No other generation sources.** The shortfall estimator considers only wind generation and a user-entered demand value. It excludes solar, gas, nuclear, interconnectors, storage, existing contracts, and all other factors relevant to actual procurement.
-
-5. **January 2026 scope.** The analysis period is restricted to January 2026 as specified in the project requirements.
-
-6. **No real-time guarantees.** Data is fetched from Elexon's API on request. The application does not maintain a persistent data feed.
-
-7. **Serverless execution limits.** When deployed to Vercel, Python functions have execution time limits (up to 60 seconds). Large date range queries may need to be split.
-
----
 
 ## Project Structure
 
@@ -488,21 +457,7 @@ WindSight is designed for deployment on **Vercel only**.
 
 ---
 
-## AI Assistance Disclosure
 
-This project was developed with assistance from:
-- **Google Antigravity** — AI coding assistant used for code generation, architecture decisions, and documentation
-- Development involved human review and verification of all generated code, API integration, and test results
-
-The AI assistance was used for:
-- Initial project scaffolding and boilerplate
-- Component implementation
-- Test writing
-- Documentation drafting
-
-All Elexon API integration, data processing logic, statistical calculations, and business rules were verified against the actual API responses and requirements.
-
----
 
 ## Known Limitations and Future Improvements
 
