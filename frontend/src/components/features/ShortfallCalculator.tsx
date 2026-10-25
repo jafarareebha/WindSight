@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calculator, AlertTriangle, ArrowRight, ShieldAlert, Clock } from 'lucide-react';
+import { Calculator, ArrowRight, Clock } from 'lucide-react';
 import { api } from '../../services/api';
 import type { ForecastInterval, ShortfallResponse } from '../../types';
 
@@ -14,9 +14,9 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
   intervals = [],
   selectedDate,
 }) => {
-  const [demandMw, setDemandMw] = useState<number>(36000);
+  const [demandMw, setDemandMw] = useState<string>('36000');
   const [selectedIntervalIndex, setSelectedIntervalIndex] = useState<number | 'custom'>('custom');
-  const [forecastMw, setForecastMw] = useState<number>(initialForecastMw);
+  const [forecastMw, setForecastMw] = useState<string>(String(initialForecastMw));
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<ShortfallResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -32,11 +32,11 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
       const chosenIdx = peakEveningIndex >= 0 ? peakEveningIndex : intervals.findIndex((inv) => inv.forecastGeneration !== null);
       if (chosenIdx >= 0) {
         setSelectedIntervalIndex(chosenIdx);
-        setForecastMw(intervals[chosenIdx].forecastGeneration ?? initialForecastMw);
+        setForecastMw(String(intervals[chosenIdx].forecastGeneration ?? initialForecastMw));
         return;
       }
     }
-    setForecastMw(initialForecastMw);
+    setForecastMw(String(initialForecastMw));
   }, [intervals, initialForecastMw]);
 
   const handleIntervalSelect = (value: string) => {
@@ -47,19 +47,62 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
       setSelectedIntervalIndex(idx);
       const chosen = intervals[idx];
       if (chosen && chosen.forecastGeneration !== null) {
-        setForecastMw(chosen.forecastGeneration);
+        setForecastMw(String(chosen.forecastGeneration));
+        setResult(null);
+        setError(null);
       }
     }
   };
 
+  const parsedDemand = Number(demandMw);
+  const parsedForecast = Number(forecastMw);
+  const isDemandValid = demandMw.trim() !== '' && !Number.isNaN(parsedDemand) && parsedDemand >= 0;
+  const isForecastValid = forecastMw.trim() !== '' && !Number.isNaN(parsedForecast) && parsedForecast >= 0;
+
+  const currentDemand = isDemandValid ? parsedDemand : 0;
+  const currentForecast = isForecastValid ? parsedForecast : 0;
+  // Residual Demand: System Demand - Wind Generation Forecast
+  const calculatedShortfall = Math.max(0, currentDemand - currentForecast);
+
+  const handleDemandChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDemandMw(e.target.value);
+    setResult(null);
+    setError(null);
+  };
+
+  const handleForecastChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedIntervalIndex('custom');
+    setForecastMw(e.target.value);
+    setResult(null);
+    setError(null);
+  };
+
+  const handlePresetClick = (d: number, f: number) => {
+    setSelectedIntervalIndex('custom');
+    setDemandMw(String(d));
+    setForecastMw(String(f));
+    setResult(null);
+    setError(null);
+  };
+
   const handleCalculate = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+
+    if (!isDemandValid) {
+      setError('Please enter a valid non-negative number for System Demand.');
+      return;
+    }
+    if (!isForecastValid) {
+      setError('Please enter a valid non-negative number for Wind Generation Forecast.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
       const response = await api.calculateShortfall({
-        demand_mw: Number(demandMw),
-        forecast_mw: Number(forecastMw),
+        demand_mw: parsedDemand,
+        forecast_mw: parsedForecast,
       });
       setResult(response);
     } catch (err) {
@@ -68,8 +111,6 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
       setLoading(false);
     }
   };
-
-  const calculatedShortfall = Math.max(0, demandMw - forecastMw);
 
   const selectedInterval =
     typeof selectedIntervalIndex === 'number' && intervals[selectedIntervalIndex]
@@ -138,11 +179,12 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
               <input
                 type="number"
                 min="0"
-                step="100"
+                step="any"
                 value={demandMw}
-                onChange={(e) => setDemandMw(Number(e.target.value))}
+                onChange={handleDemandChange}
                 className="w-full bg-[#0f1729] border border-[#2a3a4e] rounded px-3 py-2 text-sm font-mono text-[#e2e8f0] focus:outline-none focus:border-[#14b8a6]"
                 placeholder="e.g. 36000"
+                required
               />
               <span className="absolute right-3 top-2.5 text-xs text-[#64748b] font-mono">
                 MW
@@ -161,14 +203,12 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
               <input
                 type="number"
                 min="0"
-                step="100"
+                step="any"
                 value={forecastMw}
-                onChange={(e) => {
-                  setSelectedIntervalIndex('custom');
-                  setForecastMw(Number(e.target.value));
-                }}
+                onChange={handleForecastChange}
                 className="w-full bg-[#0f1729] border border-[#2a3a4e] rounded px-3 py-2 text-sm font-mono text-[#e2e8f0] focus:outline-none focus:border-[#14b8a6]"
                 placeholder="e.g. 14500"
+                required
               />
               <span className="absolute right-3 top-2.5 text-xs text-[#64748b] font-mono">
                 MW
@@ -190,11 +230,7 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
               <button
                 key={preset.label}
                 type="button"
-                onClick={() => {
-                  setSelectedIntervalIndex('custom');
-                  setDemandMw(preset.d);
-                  setForecastMw(preset.f);
-                }}
+                onClick={() => handlePresetClick(preset.d, preset.f)}
                 className="px-2 py-1 text-[11px] font-mono bg-[#0f1729] hover:bg-[#1e2a3a] text-[#94a3b8] rounded border border-[#2a3a4e] transition-colors"
               >
                 {preset.label}
@@ -220,23 +256,23 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
       )}
 
       {/* Result Display */}
-      {(result || (!error && demandMw > 0)) && (
+      {(!error && isDemandValid && isForecastValid && currentDemand > 0) && (
         <div className="mt-5 pt-4 border-t border-[#2a3a4e]">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
             <div className="bg-[#0f1729] border border-[#2a3a4e] p-3 rounded">
               <span className="text-[11px] font-mono text-[#94a3b8] uppercase">Target Demand</span>
               <div className="text-lg font-mono font-semibold text-[#e2e8f0] tabular-nums mt-0.5">
-                {(result?.demand_mw ?? demandMw).toLocaleString()} MW
+                {currentDemand.toLocaleString()} MW
               </div>
             </div>
 
             <div className="bg-[#0f1729] border border-[#2a3a4e] p-3 rounded">
               <span className="text-[11px] font-mono text-[#94a3b8] uppercase">Wind Share</span>
               <div className="text-lg font-mono font-semibold text-[#14b8a6] tabular-nums mt-0.5">
-                {(((result?.forecast_mw ?? forecastMw) / (result?.demand_mw ?? demandMw)) * 100).toFixed(1)}%
+                {currentDemand > 0 ? ((currentForecast / currentDemand) * 100).toFixed(1) : '0.0'}%
               </div>
               <span className="text-[10px] text-[#64748b] font-mono">
-                {(result?.forecast_mw ?? forecastMw).toLocaleString()} MW forecast
+                {currentForecast.toLocaleString()} MW forecast
               </span>
             </div>
 
@@ -248,8 +284,6 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
               <span className="text-[10px] text-[#64748b] font-mono">Capacity required</span>
             </div>
           </div>
-
-         
         </div>
       )}
     </div>
