@@ -7,10 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "esbuild tests/route_context.test.tsx --bundle --platform=node --packages=external --outfile=tests/route_context.test.bundle.mjs --format=esm && node --test tests/route_context.test.bundle.mjs"
+    "test": "esbuild tests/*.test.tsx --bundle --platform=node --packages=external --outdir=tests/dist --format=esm && node --test tests/dist/*.test.js"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.0",
+    "jspdf": "^4.2.1",
     "lucide-react": "^1.16.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

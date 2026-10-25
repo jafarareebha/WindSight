@@ -89,8 +89,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
         </div>
 
         <div className="text-[10px] text-[#64748b] flex items-center gap-1">
-          <ShieldAlert className="w-3 h-3 text-[#f59e0b] shrink-0" />
-          <span>Point-in-time audited data</span>
+          
+          
         </div>
       </div>
     </aside>

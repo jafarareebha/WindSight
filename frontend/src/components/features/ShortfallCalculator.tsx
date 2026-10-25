@@ -249,14 +249,7 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
             </div>
           </div>
 
-          <div className="flex items-start gap-2 p-3 bg-[#0f1729]/70 border border-[#2a3a4e] rounded text-[11px] text-[#94a3b8] font-mono leading-relaxed">
-            <ShieldAlert className="w-4 h-4 text-[#f59e0b] shrink-0 mt-0.5" />
-            <div>
-              <span className="font-semibold text-[#e2e8f0]">System Operational Notice: </span>
-              {result?.disclaimer ||
-                'Simulated shortfall calculation based on raw day-ahead forecast deltas. This metric is informational and does not account for interconnectors, pumped storage, rapid CCGT spinning reserves, or demand-side balancing mechanisms.'}
-            </div>
-          </div>
+         
         </div>
       )}
     </div>

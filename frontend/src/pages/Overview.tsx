@@ -9,6 +9,7 @@ import { EmptyState } from '../components/common/EmptyState';
 import { ForecastActualChart } from '../components/charts/ForecastActualChart';
 import { ForecastErrorChart } from '../components/charts/ForecastErrorChart';
 import { ShortfallCalculator } from '../components/features/ShortfallCalculator';
+import { ExportMenu } from '../components/common/ExportMenu';
 import { calculateIntervalCoverage, formatCutoff } from '../utils/forecastPresentation';
 import type { ForecastResponse, AppOutletContext } from '../types';
 
@@ -103,6 +104,17 @@ export const Overview: React.FC = () => {
               </span>
             </>
           )}
+          <ExportMenu
+            selectedDate={selectedDate}
+            summary={summary}
+            intervals={intervals}
+            cutoff={cutoff}
+            fallbackCutoff={{
+              hour: cutoffHour,
+              minute: cutoffMinute,
+              timezone: 'UTC',
+            }}
+          />
         </div>
       </div>
 
@@ -209,10 +221,7 @@ export const Overview: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-[#2a3a4e] text-[#64748b] text-[11px] leading-relaxed">
-                Overpredicted intervals require the Balancing Mechanism to dispatch rapid response
-                gas turbines or constrain demand, elevating system balancing costs.
-              </div>
+              
             </div>
           </div>
         </div>

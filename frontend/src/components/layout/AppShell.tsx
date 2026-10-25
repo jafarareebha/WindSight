@@ -86,11 +86,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         <div>
           WindSight Telemetry &copy; 2026. GB Power System Wind Forecasting Evaluation Platform.
         </div>
-        <div className="flex items-center gap-4 text-[11px]">
-          <span>Data: Elexon BMRS B1620 &amp; FUELHH</span>
-          <span>Settlement Period: 30-min</span>
-          <span>Point-in-Time Causality Guard: Active</span>
-        </div>
+        
       </footer>
     </div>
   );
