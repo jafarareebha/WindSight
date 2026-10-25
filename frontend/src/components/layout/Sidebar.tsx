@@ -38,9 +38,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
     <aside className="h-full flex flex-col justify-between bg-[#1a2332] border-r border-[#2a3a4e] w-64 p-3 select-none">
       <div>
         <div className="px-3 py-3 mb-2">
-          <span className="text-[11px] font-mono font-semibold tracking-wider text-[#64748b] uppercase">
-            Intelligence Suite
-          </span>
         </div>
 
         <nav className="space-y-1">

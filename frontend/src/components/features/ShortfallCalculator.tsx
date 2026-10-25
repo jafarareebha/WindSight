@@ -123,9 +123,7 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
         <Calculator className="w-4 h-4 text-[#14b8a6]" />
         <div>
           <h3 className="text-sm font-semibold text-[#e2e8f0]">Residual Demand & Shortfall Stress Calculator</h3>
-          <p className="text-xs text-[#94a3b8]">
-            Simulate thermal/storage dispatch requirements given wind forecast generation
-          </p>
+        
         </div>
       </div>
 
@@ -190,9 +188,7 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
                 MW
               </span>
             </div>
-            <p className="text-[11px] text-[#64748b] mt-1 font-mono">
-              Typical UK winter peak: 38,000–44,000 MW
-            </p>
+            
           </div>
 
           <div>
@@ -214,9 +210,7 @@ export const ShortfallCalculator: React.FC<ShortfallCalculatorProps> = ({
                 MW
               </span>
             </div>
-            <p className="text-[11px] text-[#64748b] mt-1 font-mono">
-              GB Wind Nameplate Capacity: ~30,000 MW
-            </p>
+            
           </div>
         </div>
 

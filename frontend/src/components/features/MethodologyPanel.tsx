@@ -132,29 +132,7 @@ export const MethodologyPanel: React.FC = () => {
       </div>
 
       {/* Assumptions & Limitations */}
-      <div className="bg-[#1a2332] border border-[#2a3a4e] rounded-md p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <AlertOctagon className="w-4 h-4 text-[#f59e0b]" />
-          <h4 className="text-sm font-semibold text-[#e2e8f0]">5. Assumptions, Constraints & Limitations</h4>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-[#94a3b8]">
-          <div className="bg-[#0f1729] p-3 rounded border border-[#2a3a4e]">
-            <span className="text-[#e2e8f0] font-semibold block mb-1">Curtailment & Bids</span>
-            When wind generation is curtailed under Balancing Mechanism (BM) bids due to transmission bottlenecks
-            (e.g. B6 Anglo-Scottish boundary constraints), FUELHH reflects post-curtailment metered energy.
-          </div>
-          <div className="bg-[#0f1729] p-3 rounded border border-[#2a3a4e]">
-            <span className="text-[#e2e8f0] font-semibold block mb-1">Embedded Generation</span>
-            Small sub-transmission distributed wind generation is treated as negative demand by the system operator
-            and is not individually captured in transmission-level FUELHH actuals.
-          </div>
-          <div className="bg-[#0f1729] p-3 rounded border border-[#2a3a4e]">
-            <span className="text-[#e2e8f0] font-semibold block mb-1">Historical Period Scope</span>
-            The telemetry cohort is strictly validated for January 1, 2026 through January 31, 2026. Data outside this
-            month is rejected by pipeline schema guards.
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 };
